@@ -39,5 +39,5 @@ The result is an AI assistant that actually knows your infrastructure — it can
 - Homelab monitoring and management
 - Grafana dashboard creation and maintenance
 - Infrastructure documentation
-- PowerShell and scripting assistance
+- Bash and PowerShell scripting assistance
 - General AI assistant tasks scoped to the homelab context
