@@ -8,6 +8,18 @@ Claudebox is a GMKTec K11 mini PC running Debian 13 (trixie) with Claude Desktop
 
 The result is an AI assistant that actually knows your infrastructure — it can query live metrics, manage dashboards, read and write files, and remember context across sessions.
 
+## Persistent Context
+
+Claudebox uses three layers of persistent memory:
+
+**Memory MCP** - Knowledge graph for structured facts: infrastructure IPs, server inventory, conventions. Shared across all chats.
+
+**Basic Memory** - Markdown-based knowledge base for Claudebox-specific context accumulated through conversations. Obsidian-compatible, stored locally.
+
+**GitHub (claude-prime-directive)** - The foundational reference repo. Contains communication preferences, cognitive style, infrastructure documentation, workflows, and project instructions. Loaded on demand via Desktop Commander. Acts as stable, version-controlled long-term memory that doesn't drift over time.
+
+Together these give Claude persistent awareness of the homelab environment, working preferences, and accumulated knowledge across sessions.
+
 ## Remote Access
 
 **RDP** - Primary access method at home. Connect directly to the Claudebox desktop via any RDP client.
