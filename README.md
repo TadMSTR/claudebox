@@ -30,7 +30,7 @@ The result is an AI assistant that actually knows your infrastructure — it can
 
 - **Device:** GMKTec K11 mini PC
 - **CPU:** AMD Ryzen 9 8945HS (8 cores / 16 threads)
-- **RAM:** 28GB
+- **RAM:** 28GB (32GB total, shared between CPU/GPU)
 - **OS:** Debian 13 (trixie)
 
 ## Use Cases
