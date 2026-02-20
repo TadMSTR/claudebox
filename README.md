@@ -32,7 +32,6 @@ The result is an AI assistant that actually knows your infrastructure — it can
 - **CPU:** AMD Ryzen 9 8945HS (8 cores / 16 threads)
 - **RAM:** 28GB
 - **OS:** Debian 13 (trixie)
-- **IP:** 192.168.1.178
 
 ## Use Cases
 
