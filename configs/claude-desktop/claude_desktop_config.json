@@ -1,0 +1,55 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MEMORY_FILE_PATH": "/home/ted/.config/Claude/memory/memory.db"
+      }
+    },
+    "netdata-unraid": {
+      "command": "/usr/sbin/nd-mcp",
+      "args": [
+        "--bearer", "YOUR_NETDATA_TOKEN",
+        "ws://192.168.1.6:19999/mcp"
+      ]
+    },
+    "netdata-claudebox": {
+      "command": "/usr/sbin/nd-mcp",
+      "args": [
+        "--bearer", "YOUR_NETDATA_TOKEN",
+        "ws://localhost:19999/mcp"
+      ]
+    },
+    "basic-memory": {
+      "command": "uvx",
+      "args": ["basic-memory", "mcp", "--project", "claude"],
+      "env": {
+        "BASIC_MEMORY_HOME": "/home/ted/.config/Claude/basic-memory"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--browser", "firefox"]
+    },
+    "github-personal": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN"
+      }
+    },
+    "github-work": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN"
+      }
+    }
+  },
+  "preferences": {
+    "legacyQuickEntryEnabled": false,
+    "coworkScheduledTasksEnabled": false,
+    "sidebarMode": "chat"
+  }
+}
