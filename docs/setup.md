@@ -66,7 +66,6 @@ environment.
 ### Guacamole
 
 Browser-based remote access for use outside the home network, hosted on Atlas.
-Accessible at `https://guacamole.glitch42.com`.
 
 **Stack:** Guacamole + guacd + Postgres 15, running via Docker Compose on Atlas.
 Authentication via Authentik OIDC (SSO with the rest of the homelab).
@@ -74,7 +73,7 @@ Authentication via Authentik OIDC (SSO with the rest of the homelab).
 The compose file is in `homelab-compose` repo under Atlas stacks. Key details:
 
 - Guacamole web app on port `8189`, proxied via SWAG
-- Authentik OIDC endpoints at `authentik.glitch42.com`
+- Authentik OIDC for authentication
 - Postgres data at `/mnt/datastor/appdata/guacamole/postgres`
 - Init SQL in `/mnt/datastor/appdata/guacamole/init` (required on first run to
   create the database schema — generate with the guacamole container's
