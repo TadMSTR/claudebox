@@ -70,7 +70,7 @@ root and Claude's config lives in `~/.config/Claude/`.
 | Script | `~/scripts/backup-claude.sh` |
 | Schedule | Daily at **3:00 AM** (cron) |
 | Destination | `/mnt/atlas/claudebox/claude-backup/` |
-| Notifications | ntfy → `https://ntfy.glitch42.com/claudebox` |
+| Notifications | ntfy (homelab instance) |
 | Retention | 90 days |
 
 ### What Gets Backed Up
@@ -78,7 +78,7 @@ root and Claude's config lives in `~/.config/Claude/`.
 - `~/.config/Claude/memory/memory.db` — Memory MCP knowledge graph (JSONL format despite the `.db` extension — plain `cp` is safe)
 - `~/.config/Claude/basic-memory/claude/` — Basic Memory markdown knowledge base
 - `~/.config/Claude/claude_desktop_config.json` — MCP server config (contains live API tokens, NFS-only)
-- `~/.config/Claude/Claude Extensions Settings/` — Extension settings (contains Grafana service account token, NFS-only)
+- `~/.config/Claude/Claude Extensions Settings/` — Extension settings (contains service account tokens, NFS-only)
 
 ### Directory Structure on NFS
 
