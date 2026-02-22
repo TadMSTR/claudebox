@@ -1,7 +1,7 @@
 #!/bin/bash
 # backup-claude.sh
 # Backs up Claude Desktop data to NFS share (atlas)
-# Covers: memory.db, basic-memory markdown, extension settings
+# Covers: memory.db (SQLite), basic-memory markdown, extension settings
 
 # ── Config ────────────────────────────────────────────────────────────────────
 CLAUDE_DIR="/home/ted/.config/Claude"
@@ -10,7 +10,7 @@ DATE=$(date +%Y-%m-%d)
 LOG="/home/ted/.local/share/logs/claude-backup.log"
 
 NTFY_ENABLED=true
-NTFY_URL="https://ntfy.example.com"   # set your ntfy URL
+NTFY_URL="https://ntfy.glitch42.com"
 NTFY_TOPIC="claudebox"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -55,7 +55,15 @@ rsync -a --delete \
     || die "basic-memory sync failed"
 log "basic-memory OK"
 
-# ── Extension settings (contains secrets - NFS only, not committed) ───────────
+# ── claude_desktop_config.json (contains secrets - NFS only) ─────────────────
+log "Backing up claude_desktop_config.json"
+cp "$CLAUDE_DIR/claude_desktop_config.json" "$SNAPSHOT/claude_desktop_config.json" \
+    || die "claude_desktop_config.json backup failed"
+cp "$SNAPSHOT/claude_desktop_config.json" "$DEST/latest/claude_desktop_config.json" \
+    || die "Failed to copy claude_desktop_config.json to latest"
+log "claude_desktop_config.json OK"
+
+# ── Extension settings (contains secrets - NFS only) ─────────────────────────
 log "Syncing extension settings"
 rsync -a --delete \
     "$CLAUDE_DIR/Claude Extensions Settings/" \
