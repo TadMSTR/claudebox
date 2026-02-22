@@ -70,7 +70,7 @@ root and Claude's config lives in `~/.config/Claude/`.
 | Script | `~/scripts/backup-claude.sh` |
 | Schedule | Daily at **3:00 AM** (cron) |
 | Destination | `/mnt/atlas/claudebox/claude-backup/` |
-| Notifications | ntfy (homelab instance) |
+| Notifications | ntfy → `https://ntfy.mydomain.com/claudebox` |
 | Retention | 90 days |
 
 ### What Gets Backed Up
