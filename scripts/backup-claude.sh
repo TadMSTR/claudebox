@@ -73,6 +73,11 @@ cp -r "$CLAUDE_DIR/Claude Extensions Settings/." "$SNAPSHOT/extension-settings" 
     || die "Failed to snapshot extension settings"
 log "Extension settings OK"
 
+# ── Cleanup snapshots older than 90 days ─────────────────────────────────────
+log "Cleaning up snapshots older than 90 days"
+find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
+log "Cleanup OK"
+
 # ── Done ──────────────────────────────────────────────────────────────────────
 log "Claude backup complete"
 notify "Claude Backup OK" "claudebox claude backup completed ($DATE)" "default" "check,backup"
