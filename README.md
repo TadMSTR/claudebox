@@ -33,7 +33,9 @@ Together these give Claude persistent awareness of the homelab environment, work
 | Desktop Commander | File operations, terminal process execution, system commands on the Claudebox host |
 | Netdata (Claudebox) | Live system metrics and alerts for the local Claudebox machine |
 | Netdata (Unraid) | Live metrics and alerts for the Unraid server |
-| Grafana | Dashboard management, alert rules, metrics querying via Prometheus/Loki |
+| Netdata (TrueNAS) | Live metrics and alerts for the TrueNAS server |
+| InfluxDB | Query and write time-series data in InfluxDB v2.7 on TrueNAS. Telegraf ships metrics from all hosts into per-host buckets. |
+| Grafana | Dashboard management, alert rules, and querying across Netdata, InfluxDB, and Loki datasources. Also covers OnCall schedules and incident management. |
 | Memory MCP | Persistent knowledge graph shared across all chats (infrastructure IPs, conventions, facts) |
 | Basic Memory | Persistent markdown knowledge base for Claudebox-specific context, Obsidian-compatible |
 | Microsoft Learn | Search and fetch Microsoft/Azure documentation |
