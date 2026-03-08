@@ -160,6 +160,21 @@ if [[ -f "/home/ted/.cache/qmd/index.sqlite" ]]; then
     log "qmd collection/context list OK"
 fi
 
+# ── cui config (Claude Code Web UI) ──────────────────────────────────────────
+log "Backing up cui config"
+CUI_DEST="$DEST/latest/cui"
+mkdir -p "$CUI_DEST"
+if [[ -f "/home/ted/.cui/config.json" ]]; then
+    cp "/home/ted/.cui/config.json" "$CUI_DEST/config.json"
+    log "cui config.json OK"
+fi
+# Also back up the SWAG proxy conf for cui
+if [[ -f "/opt/appdata/swag/nginx/proxy-confs/cui.subdomain.conf" ]]; then
+    mkdir -p "$DEST/latest/swag-proxy-confs"
+    cp "/opt/appdata/swag/nginx/proxy-confs/cui.subdomain.conf" "$DEST/latest/swag-proxy-confs/"
+    log "cui SWAG proxy conf OK"
+fi
+
 # ── Utility scripts (qmd-reindex, check-qmd-issue, etc.) ─────────────────────
 log "Backing up utility scripts"
 if [[ -d "/home/ted/scripts" ]]; then
