@@ -73,6 +73,32 @@ cp -r "$CLAUDE_DIR/Claude Extensions Settings/." "$SNAPSHOT/extension-settings" 
     || die "Failed to snapshot extension settings"
 log "Extension settings OK"
 
+# ── Claude Code settings.json ────────────────────────────────────────────────
+log "Backing up claude settings.json"
+if [[ -f "/home/ted/.claude/settings.json" ]]; then
+    cp "/home/ted/.claude/settings.json" "$SNAPSHOT/claude-settings.json" \
+        || die "claude settings.json backup failed"
+    cp "$SNAPSHOT/claude-settings.json" "$DEST/latest/claude-settings.json" \
+        || die "Failed to copy claude-settings.json to latest"
+    log "claude settings.json OK"
+else
+    log "WARNING: ~/.claude/settings.json not found — skipping"
+fi
+
+# ── PM2 ecosystem dump ────────────────────────────────────────────────────────
+log "Backing up PM2 dump"
+# pm2 save writes to ~/.pm2/dump.pm2 — refresh it before copying
+pm2 save --force >> "$LOG" 2>&1 || log "WARNING: pm2 save failed (PM2 may not be running)"
+if [[ -f "/home/ted/.pm2/dump.pm2" ]]; then
+    cp "/home/ted/.pm2/dump.pm2" "$SNAPSHOT/pm2-dump.pm2" \
+        || die "PM2 dump backup failed"
+    cp "$SNAPSHOT/pm2-dump.pm2" "$DEST/latest/pm2-dump.pm2" \
+        || die "Failed to copy pm2-dump.pm2 to latest"
+    log "PM2 dump OK"
+else
+    log "WARNING: ~/.pm2/dump.pm2 not found — skipping"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
