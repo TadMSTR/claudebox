@@ -149,6 +149,24 @@ if [[ -f "/home/ted/.memsearch/config.toml" ]]; then
     log "memsearch config.toml OK"
 fi
 
+# ── qmd config (collections, context — index rebuilds from source) ────────────
+log "Backing up qmd config"
+QMD_DEST="$DEST/latest/qmd"
+mkdir -p "$QMD_DEST"
+if [[ -f "/home/ted/.cache/qmd/index.sqlite" ]]; then
+    # Export collection definitions (the sqlite DB has them, but we back up via status dump)
+    qmd collection list > "$QMD_DEST/collections.txt" 2>/dev/null
+    qmd context list > "$QMD_DEST/contexts.txt" 2>/dev/null
+    log "qmd collection/context list OK"
+fi
+
+# ── Utility scripts (qmd-reindex, check-qmd-issue, etc.) ─────────────────────
+log "Backing up utility scripts"
+if [[ -d "/home/ted/scripts" ]]; then
+    rsync -a --delete "/home/ted/scripts/" "$DEST/latest/scripts/"
+    log "~/scripts/ OK"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
