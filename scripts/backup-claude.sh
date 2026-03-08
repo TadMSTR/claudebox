@@ -99,6 +99,27 @@ else
     log "WARNING: ~/.pm2/dump.pm2 not found — skipping"
 fi
 
+# ── Docker secrets (.env files not covered by docker-stack-backup.sh) ─────────
+log "Backing up Docker secrets"
+DOCKER_SECRETS_DEST="$DEST/latest/docker-secrets"
+mkdir -p "$DOCKER_SECRETS_DEST"
+if [[ -f "/home/ted/docker/librechat/.env" ]]; then
+    cp "/home/ted/docker/librechat/.env" "$DOCKER_SECRETS_DEST/librechat.env"
+    chmod 600 "$DOCKER_SECRETS_DEST/librechat.env"
+    cp "$DOCKER_SECRETS_DEST/librechat.env" "$SNAPSHOT/librechat.env" 2>/dev/null || true
+    log "LibreChat .env OK"
+else
+    log "WARNING: ~/docker/librechat/.env not found — skipping"
+fi
+if [[ -f "/opt/appdata/authelia/users_database.yml" ]]; then
+    cp "/opt/appdata/authelia/users_database.yml" "$DOCKER_SECRETS_DEST/authelia-users.yml"
+    chmod 600 "$DOCKER_SECRETS_DEST/authelia-users.yml"
+    cp "$DOCKER_SECRETS_DEST/authelia-users.yml" "$SNAPSHOT/authelia-users.yml" 2>/dev/null || true
+    log "Authelia users_database.yml OK"
+else
+    log "WARNING: Authelia users_database.yml not found — skipping"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
