@@ -99,6 +99,22 @@ else
     log "WARNING: ~/.pm2/dump.pm2 not found — skipping"
 fi
 
+# ── Docker compose files (for deploy script restore) ──────────────────────────
+log "Backing up Docker compose files"
+DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
+for stack in swag authelia librechat dockhand open-notebook perplexica; do
+    compose_src="/home/ted/docker/${stack}/docker-compose.yml"
+    compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
+    if [[ -f "$compose_src" ]]; then
+        mkdir -p "$compose_dest"
+        cp "$compose_src" "$compose_dest/docker-compose.yml"
+        log "Compose file OK: ${stack}"
+    else
+        log "WARNING: compose file not found for ${stack} — skipping"
+    fi
+done
+log "Docker compose files OK"
+
 # ── Docker secrets (.env files not covered by docker-stack-backup.sh) ─────────
 log "Backing up Docker secrets"
 DOCKER_SECRETS_DEST="$DEST/latest/docker-secrets"
@@ -168,12 +184,16 @@ if [[ -f "/home/ted/.cui/config.json" ]]; then
     cp "/home/ted/.cui/config.json" "$CUI_DEST/config.json"
     log "cui config.json OK"
 fi
-# Also back up the SWAG proxy conf for cui
-if [[ -f "/opt/appdata/swag/nginx/proxy-confs/cui.subdomain.conf" ]]; then
-    mkdir -p "$DEST/latest/swag-proxy-confs"
-    cp "/opt/appdata/swag/nginx/proxy-confs/cui.subdomain.conf" "$DEST/latest/swag-proxy-confs/"
-    log "cui SWAG proxy conf OK"
-fi
+# Also back up the SWAG proxy confs for all custom services
+SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
+mkdir -p "$SWAG_PROXY_CONFS_DEST"
+for conf in cui dockhand notebook perplexica librechat authelia; do
+    conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
+    if [[ -f "$conf_file" ]]; then
+        cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
+        log "SWAG proxy conf OK: ${conf}.subdomain.conf"
+    fi
+done
 
 # ── Claude agent scripts (memory-sync, export-librechat-memory) ───────────────
 log "Backing up Claude agent scripts"
