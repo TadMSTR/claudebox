@@ -175,6 +175,13 @@ if [[ -f "/opt/appdata/swag/nginx/proxy-confs/cui.subdomain.conf" ]]; then
     log "cui SWAG proxy conf OK"
 fi
 
+# ── Claude agent scripts (memory-sync, export-librechat-memory) ───────────────
+log "Backing up Claude agent scripts"
+if [[ -d "/home/ted/.claude/scripts" ]]; then
+    rsync -a --delete "/home/ted/.claude/scripts/" "$DEST/latest/claude-code/scripts/"
+    log "~/.claude/scripts/ OK"
+fi
+
 # ── Utility scripts (qmd-reindex, check-qmd-issue, etc.) ─────────────────────
 log "Backing up utility scripts"
 if [[ -d "/home/ted/scripts" ]]; then
