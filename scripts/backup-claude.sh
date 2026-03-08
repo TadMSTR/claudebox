@@ -120,6 +120,35 @@ else
     log "WARNING: Authelia users_database.yml not found — skipping"
 fi
 
+# ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
+log "Backing up Claude Code engine files"
+CLAUDE_CODE_DEST="$DEST/latest/claude-code"
+mkdir -p "$CLAUDE_CODE_DEST"
+
+# Root CLAUDE.md
+if [[ -f "/home/ted/.claude/CLAUDE.md" ]]; then
+    cp "/home/ted/.claude/CLAUDE.md" "$CLAUDE_CODE_DEST/CLAUDE.md"
+    log "Root CLAUDE.md OK"
+fi
+
+# Project CLAUDE.md files
+if [[ -d "/home/ted/.claude/projects" ]]; then
+    rsync -a --delete "/home/ted/.claude/projects/" "$CLAUDE_CODE_DEST/projects/"
+    log "CLAUDE.md project files OK"
+fi
+
+# Agent memory (shared + per-agent)
+if [[ -d "/home/ted/.claude/memory" ]]; then
+    rsync -a --delete "/home/ted/.claude/memory/" "$CLAUDE_CODE_DEST/memory/"
+    log "Agent memory OK"
+fi
+
+# memsearch config (not the DB — it rebuilds from markdown)
+if [[ -f "/home/ted/.memsearch/config.toml" ]]; then
+    cp "/home/ted/.memsearch/config.toml" "$CLAUDE_CODE_DEST/memsearch-config.toml"
+    log "memsearch config.toml OK"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
