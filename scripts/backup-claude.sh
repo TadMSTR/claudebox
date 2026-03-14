@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
@@ -134,6 +134,14 @@ if [[ -f "/opt/appdata/authelia/users_database.yml" ]]; then
     log "Authelia users_database.yml OK"
 else
     log "WARNING: Authelia users_database.yml not found — skipping"
+fi
+if [[ -f "/home/ted/docker/grafana/.env" ]]; then
+    cp "/home/ted/docker/grafana/.env" "$DOCKER_SECRETS_DEST/grafana.env"
+    chmod 600 "$DOCKER_SECRETS_DEST/grafana.env"
+    cp "$DOCKER_SECRETS_DEST/grafana.env" "$SNAPSHOT/grafana.env" 2>/dev/null || true
+    log "Grafana .env OK"
+else
+    log "WARNING: ~/docker/grafana/.env not found — skipping"
 fi
 
 # ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
@@ -187,7 +195,7 @@ fi
 # Also back up the SWAG proxy confs for all custom services
 SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
 mkdir -p "$SWAG_PROXY_CONFS_DEST"
-for conf in cui dockhand notebook perplexica librechat authelia; do
+for conf in cui dockhand notebook perplexica librechat authelia grafana; do
     conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
     if [[ -f "$conf_file" ]]; then
         cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
