@@ -217,6 +217,18 @@ if [[ -d "/home/ted/scripts" ]]; then
     log "~/scripts/ OK"
 fi
 
+# ── Dep-update audit log ──────────────────────────────────────────────────────
+log "Backing up dep-update audit log"
+AUDIT_SRC="/home/ted/.local/share/logs/update-audit.jsonl"
+if [[ -f "$AUDIT_SRC" ]]; then
+    cp "$AUDIT_SRC" "$DEST/latest/update-audit.jsonl" \
+        || die "update-audit.jsonl backup failed"
+    cp "$DEST/latest/update-audit.jsonl" "$SNAPSHOT/update-audit.jsonl" 2>/dev/null || true
+    log "update-audit.jsonl OK"
+else
+    log "update-audit.jsonl not found yet (no updates applied) — skipping"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
