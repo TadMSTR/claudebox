@@ -113,6 +113,14 @@ for stack in swag authelia librechat dockhand open-notebook perplexica grafana g
         log "WARNING: compose file not found for ${stack} — skipping"
     fi
 done
+# Graphiti has extra build files (Dockerfile, config.yaml) alongside compose
+for extra in Dockerfile config.yaml; do
+    extra_src="/home/ted/docker/graphiti/${extra}"
+    if [[ -f "$extra_src" ]]; then
+        cp "$extra_src" "${DOCKER_COMPOSE_DEST}/graphiti/compose/${extra}"
+        log "Graphiti ${extra} OK"
+    fi
+done
 log "Docker compose files OK"
 
 # ── Docker secrets (.env files not covered by docker-stack-backup.sh) ─────────
