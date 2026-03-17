@@ -210,6 +210,15 @@ if [[ -d "/home/ted/.claude/scripts" ]]; then
     log "~/.claude/scripts/ OK"
 fi
 
+# ── Claude agent manifests (~/.claude/agent-manifests/) ──────────────────────
+log "Backing up agent manifests"
+if [[ -d "/home/ted/.claude/agent-manifests" ]]; then
+    rsync -a --delete "/home/ted/.claude/agent-manifests/" "$DEST/latest/claude-code/agent-manifests/"
+    log "agent-manifests OK"
+else
+    log "WARNING: ~/.claude/agent-manifests not found — skipping"
+fi
+
 # ── Utility scripts (qmd-reindex, check-qmd-issue, etc.) ─────────────────────
 log "Backing up utility scripts"
 if [[ -d "/home/ted/scripts" ]]; then
