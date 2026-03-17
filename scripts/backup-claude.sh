@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica grafana; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
@@ -142,6 +142,14 @@ if [[ -f "/home/ted/docker/grafana/.env" ]]; then
     log "Grafana .env OK"
 else
     log "WARNING: ~/docker/grafana/.env not found — skipping"
+fi
+if [[ -f "/home/ted/docker/graphiti/.env" ]]; then
+    cp "/home/ted/docker/graphiti/.env" "$DOCKER_SECRETS_DEST/graphiti.env"
+    chmod 600 "$DOCKER_SECRETS_DEST/graphiti.env"
+    cp "$DOCKER_SECRETS_DEST/graphiti.env" "$SNAPSHOT/graphiti.env" 2>/dev/null || true
+    log "Graphiti .env OK"
+else
+    log "WARNING: ~/docker/graphiti/.env not found — skipping"
 fi
 
 # ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
