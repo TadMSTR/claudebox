@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
@@ -121,6 +121,11 @@ for extra in Dockerfile config.yaml; do
         log "Graphiti ${extra} OK"
     fi
 done
+# NATS has nats-server.conf alongside compose
+if [[ -f "/home/ted/docker/nats/nats-server.conf" ]]; then
+    cp "/home/ted/docker/nats/nats-server.conf" "${DOCKER_COMPOSE_DEST}/nats/compose/nats-server.conf"
+    log "NATS nats-server.conf OK"
+fi
 log "Docker compose files OK"
 
 # ── Docker secrets (.env files not covered by docker-stack-backup.sh) ─────────
@@ -211,7 +216,7 @@ fi
 # Also back up the SWAG proxy confs for all custom services
 SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
 mkdir -p "$SWAG_PROXY_CONFS_DEST"
-for conf in cui dockhand notebook perplexica librechat authelia grafana; do
+for conf in cui dockhand notebook perplexica librechat authelia grafana nats; do
     conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
     if [[ -f "$conf_file" ]]; then
         cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
