@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats n8n; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
@@ -125,6 +125,12 @@ done
 if [[ -f "/home/ted/docker/nats/nats-server.conf" ]]; then
     cp "/home/ted/docker/nats/nats-server.conf" "${DOCKER_COMPOSE_DEST}/nats/compose/nats-server.conf"
     log "NATS nats-server.conf OK"
+fi
+# n8n has exported workflow JSON files alongside compose
+if [[ -d "/home/ted/docker/n8n/workflows" ]]; then
+    mkdir -p "${DOCKER_COMPOSE_DEST}/n8n/compose/workflows"
+    cp /home/ted/docker/n8n/workflows/*.json "${DOCKER_COMPOSE_DEST}/n8n/compose/workflows/" 2>/dev/null
+    log "n8n workflow exports OK"
 fi
 log "Docker compose files OK"
 
@@ -163,6 +169,14 @@ if [[ -f "/home/ted/docker/graphiti/.env" ]]; then
     log "Graphiti .env OK"
 else
     log "WARNING: ~/docker/graphiti/.env not found — skipping"
+fi
+if [[ -f "/home/ted/docker/n8n/.env" ]]; then
+    cp "/home/ted/docker/n8n/.env" "$DOCKER_SECRETS_DEST/n8n.env"
+    chmod 600 "$DOCKER_SECRETS_DEST/n8n.env"
+    cp "$DOCKER_SECRETS_DEST/n8n.env" "$SNAPSHOT/n8n.env" 2>/dev/null || true
+    log "n8n .env OK (contains N8N_ENCRYPTION_KEY — critical for credential restore)"
+else
+    log "WARNING: ~/docker/n8n/.env not found — skipping"
 fi
 
 # ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
@@ -216,7 +230,7 @@ fi
 # Also back up the SWAG proxy confs for all custom services
 SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
 mkdir -p "$SWAG_PROXY_CONFS_DEST"
-for conf in cui dockhand notebook perplexica librechat authelia grafana nats; do
+for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n; do
     conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
     if [[ -f "$conf_file" ]]; then
         cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
