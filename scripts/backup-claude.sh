@@ -261,6 +261,19 @@ if [[ -d "/home/ted/scripts" ]]; then
     log "~/scripts/ OK"
 fi
 
+# ── System cron jobs (/etc/cron.d/) ──────────────────────────────────────────
+log "Backing up system cron jobs"
+CRON_DEST="$DEST/latest/system-cron"
+mkdir -p "$CRON_DEST"
+for cron_file in docker-stack-backup; do
+    if [[ -f "/etc/cron.d/${cron_file}" ]]; then
+        cp "/etc/cron.d/${cron_file}" "$CRON_DEST/"
+        log "System cron OK: ${cron_file}"
+    else
+        log "WARNING: /etc/cron.d/${cron_file} not found — skipping"
+    fi
+done
+
 # ── Dep-update audit log ──────────────────────────────────────────────────────
 log "Backing up dep-update audit log"
 AUDIT_SRC="/home/ted/.local/share/logs/update-audit.jsonl"
