@@ -274,6 +274,20 @@ for cron_file in docker-stack-backup; do
     fi
 done
 
+# ── Sudoers drop-ins (/etc/sudoers.d/) ────────────────────────────────────────
+log "Backing up sudoers drop-ins"
+SUDOERS_DEST="$DEST/latest/sudoers.d"
+mkdir -p "$SUDOERS_DEST"
+for sudoers_file in docker-backup; do
+    if [[ -f "/etc/sudoers.d/${sudoers_file}" ]]; then
+        cp "/etc/sudoers.d/${sudoers_file}" "$SUDOERS_DEST/"
+        chmod 440 "$SUDOERS_DEST/${sudoers_file}"
+        log "Sudoers drop-in OK: ${sudoers_file}"
+    else
+        log "WARNING: /etc/sudoers.d/${sudoers_file} not found — skipping"
+    fi
+done
+
 # ── Dep-update audit log ──────────────────────────────────────────────────────
 log "Backing up dep-update audit log"
 AUDIT_SRC="/home/ted/.local/share/logs/update-audit.jsonl"
