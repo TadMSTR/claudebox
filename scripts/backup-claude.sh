@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats n8n; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats n8n plane; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
@@ -178,6 +178,14 @@ if [[ -f "/home/ted/docker/n8n/.env" ]]; then
 else
     log "WARNING: ~/docker/n8n/.env not found — skipping"
 fi
+if [[ -f "/home/ted/docker/plane/.env" ]]; then
+    cp "/home/ted/docker/plane/.env" "$DOCKER_SECRETS_DEST/plane.env"
+    chmod 600 "$DOCKER_SECRETS_DEST/plane.env"
+    cp "$DOCKER_SECRETS_DEST/plane.env" "$SNAPSHOT/plane.env" 2>/dev/null || true
+    log "Plane .env OK (contains SECRET_KEY, DB password, RabbitMQ/MinIO creds)"
+else
+    log "WARNING: ~/docker/plane/.env not found — skipping"
+fi
 
 # ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
 log "Backing up Claude Code engine files"
@@ -230,7 +238,7 @@ fi
 # Also back up the SWAG proxy confs for all custom services
 SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
 mkdir -p "$SWAG_PROXY_CONFS_DEST"
-for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n; do
+for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n plane; do
     conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
     if [[ -f "$conf_file" ]]; then
         cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
