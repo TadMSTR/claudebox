@@ -262,6 +262,19 @@ for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n
     fi
 done
 
+# ── agent-bus comms artifacts (build plans, audit requests/reports, diagnose sessions) ───────
+log "Backing up comms artifacts"
+if [[ -d "/home/ted/.claude/comms/artifacts" ]]; then
+    rsync -a --delete \
+        "/home/ted/.claude/comms/artifacts/" \
+        "$DEST/latest/comms-artifacts/" \
+        || die "comms/artifacts sync failed"
+    log "comms/artifacts OK"
+else
+    log "WARNING: ~/.claude/comms/artifacts not found — skipping"
+fi
+# logs/ is ephemeral JSONL event data — not backed up (regenerates from agent activity)
+
 # ── Claude agent scripts (memory-sync, export-librechat-memory) ───────────────
 log "Backing up Claude agent scripts"
 if [[ -d "/home/ted/.claude/scripts" ]]; then
