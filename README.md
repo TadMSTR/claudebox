@@ -10,15 +10,17 @@ The result is an AI assistant that actually knows your infrastructure — it can
 
 ## Persistent Context
 
-Claudebox uses three layers of persistent memory:
+Claudebox uses a three-tier memory system with two semantic search engines and a knowledge graph:
 
-**Memory MCP** - Knowledge graph for structured facts: infrastructure IPs, server inventory, conventions. Shared across all chats.
+**Session tier** — Raw session notes auto-captured by the memsearch plugin, per-project. Indexed in real-time by `memsearch-watch` (Milvus standalone + bge-m3 embeddings via forge GPU). 30-day retention.
 
-**Basic Memory** - Markdown-based knowledge base for Claudebox-specific context accumulated through conversations. Obsidian-compatible, stored locally.
+**Working tier** — Agent-curated knowledge at `~/.claude/memory/`. Promoted from session nightly by `memory-promote-daily` (Haiku) or written by agents during work. 90-day expiry. Injected at session start via hooks.
 
-**GitHub (claude-prime-directive)** - The foundational reference repo. Contains communication preferences, cognitive style, infrastructure documentation, workflows, and project instructions. Loaded on demand via Desktop Commander. Acts as stable, version-controlled long-term memory that doesn't drift over time.
+**Distilled tier** — Permanent notes in `claude-prime-directive/memory/distilled/`, git-backed. Promoted from working weekly by `memory-sync-weekly` (Opus) when notes pass the "would this matter in 3 months?" test.
 
-Together these give Claude persistent awareness of the homelab environment, working preferences, and accumulated knowledge across sessions.
+**Knowledge graph** — Graphiti + Neo4j for relational/topology queries. Fed by memory-flush (real-time) and nightly batch ingestion.
+
+**Search surfaces:** memsearch (automatic, per-prompt), qmd (on-demand, hybrid BM25+vector across all repos), Graphiti (relational). See [homelab-agent docs](https://github.com/TadMSTR/homelab-agent/tree/main/docs/components) for full architecture.
 
 ## Remote Access
 
@@ -41,8 +43,8 @@ Together these give Claude persistent awareness of the homelab environment, work
 | Bluesky | Post, search, notifications, and social graph management |
 | GitHub (Personal) | Repo management, issues, PRs for TadMSTR account |
 | GitHub (Work) | Repo management, issues, PRs for work account |
-| Memory MCP | Persistent knowledge graph shared across all chats (infrastructure IPs, conventions, facts) |
-| Basic Memory | Persistent markdown knowledge base for Claudebox-specific context, Obsidian-compatible |
+| memsearch | Semantic memory search — auto-injects relevant context from past sessions via Claude Code plugin |
+| qmd | Hybrid semantic search (BM25 + vector) over repos, docs, and agent memory — HTTP + stdio MCP |
 | Playwright | Browser automation via Firefox |
 | Microsoft Learn | Search and fetch Microsoft/Azure documentation |
 
