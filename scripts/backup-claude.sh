@@ -102,7 +102,7 @@ fi
 # ── Docker compose files (for deploy script restore) ──────────────────────────
 log "Backing up Docker compose files"
 DOCKER_COMPOSE_DEST="/mnt/atlas/claudebox/docker-backups"
-for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats n8n plane temporal; do
+for stack in swag authelia librechat dockhand open-notebook perplexica grafana graphiti nats n8n plane temporal task-queue-mcp; do
     compose_src="/home/ted/docker/${stack}/docker-compose.yml"
     compose_dest="${DOCKER_COMPOSE_DEST}/${stack}/compose"
     if [[ -f "$compose_src" ]]; then
