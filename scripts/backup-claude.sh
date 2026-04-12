@@ -291,6 +291,17 @@ else
     log "WARNING: ~/.claude/agent-manifests not found — skipping"
 fi
 
+# ── Claude OAuth credentials (~/.claude/.credentials.json) ───────────────────
+# Required by trigger-proxy.py to call the Anthropic RemoteTrigger API
+log "Backing up Claude OAuth credentials"
+if [[ -f "/home/ted/.claude/.credentials.json" ]]; then
+    cp "/home/ted/.claude/.credentials.json" "$DEST/latest/claude-code/credentials.json"
+    chmod 600 "$DEST/latest/claude-code/credentials.json"
+    log "~/.claude/.credentials.json OK"
+else
+    log "WARNING: ~/.claude/.credentials.json not found — trigger-proxy will not work after deploy until re-authenticated"
+fi
+
 # ── Utility scripts (qmd-reindex, check-qmd-issue, etc.) ─────────────────────
 log "Backing up utility scripts"
 if [[ -d "/home/ted/scripts" ]]; then
