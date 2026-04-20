@@ -140,6 +140,12 @@ for extra_dir in dynamicconfig scripts; do
         log "Temporal ${extra_dir}/ OK"
     fi
 done
+# Hister has preview/Dockerfile alongside compose (needed to build hister-preview container)
+if [[ -f "/home/ted/docker/hister/preview/Dockerfile" ]]; then
+    mkdir -p "${DOCKER_COMPOSE_DEST}/hister/compose/preview"
+    cp "/home/ted/docker/hister/preview/Dockerfile" "${DOCKER_COMPOSE_DEST}/hister/compose/preview/Dockerfile"
+    log "Hister preview/Dockerfile OK"
+fi
 # Hister has data/config.yml (contains access token — treat as secret alongside compose)
 if [[ -f "/home/ted/docker/hister/data/config.yml" ]]; then
     mkdir -p "${DOCKER_COMPOSE_DEST}/hister/compose/data"
