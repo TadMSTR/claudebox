@@ -224,6 +224,24 @@ else
     log "WARNING: /opt/appdata/ollama-queue-proxy/config.yml not found — skipping"
 fi
 
+# ── Claude secrets (~/.claude-secrets/ — Matrix bot token, room IDs, etc.) ───
+log "Backing up ~/.claude-secrets/"
+CLAUDE_SECRETS_SRC="/home/ted/.claude-secrets"
+CLAUDE_SECRETS_DEST="$DEST/latest/claude-secrets"
+if [[ -d "$CLAUDE_SECRETS_SRC" ]]; then
+    mkdir -p "$CLAUDE_SECRETS_DEST"
+    for secret_file in "$CLAUDE_SECRETS_SRC"/*; do
+        [[ -f "$secret_file" ]] || continue
+        fname=$(basename "$secret_file")
+        cp "$secret_file" "$CLAUDE_SECRETS_DEST/$fname"
+        chmod 600 "$CLAUDE_SECRETS_DEST/$fname"
+        cp "$CLAUDE_SECRETS_DEST/$fname" "$SNAPSHOT/$fname" 2>/dev/null || true
+        log "claude-secrets OK: $fname"
+    done
+else
+    log "WARNING: ~/.claude-secrets not found — Matrix bot token will not be backed up"
+fi
+
 # ── Claude Code Engine (CLAUDE.md, memsearch config, agent memory) ────────────
 log "Backing up Claude Code engine files"
 CLAUDE_CODE_DEST="$DEST/latest/claude-code"
