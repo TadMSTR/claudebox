@@ -330,6 +330,25 @@ else
     log "WARNING: ~/.claude/agent-manifests not found — skipping"
 fi
 
+# ── Scoped-MCP manifests (~/.claude/manifests/) ───────────────────────────────
+log "Backing up scoped-mcp manifests"
+if [[ -d "/home/ted/.claude/manifests" ]]; then
+    rsync -a --delete "/home/ted/.claude/manifests/" "$DEST/latest/claude-code/scoped-mcp-manifests/"
+    log "scoped-mcp-manifests OK"
+else
+    log "WARNING: ~/.claude/manifests not found — skipping"
+fi
+
+# ── matrix-dispatcher data (~/.claude/data/matrix-dispatcher/) ────────────────
+log "Backing up matrix-dispatcher data"
+if [[ -d "/home/ted/.claude/data/matrix-dispatcher" ]]; then
+    mkdir -p "$DEST/latest/matrix-dispatcher-data"
+    rsync -a "/home/ted/.claude/data/matrix-dispatcher/" "$DEST/latest/matrix-dispatcher-data/"
+    log "matrix-dispatcher data OK"
+else
+    log "matrix-dispatcher data dir not yet created — skipping"
+fi
+
 # ── Claude OAuth credentials (~/.claude/.credentials.json) ───────────────────
 # Required by trigger-proxy.py to call the Anthropic RemoteTrigger API
 log "Backing up Claude OAuth credentials"
