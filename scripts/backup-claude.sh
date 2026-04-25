@@ -293,7 +293,7 @@ fi
 # Also back up the SWAG proxy confs for all custom services
 SWAG_PROXY_CONFS_DEST="$DEST/latest/swag-proxy-confs"
 mkdir -p "$SWAG_PROXY_CONFS_DEST"
-for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n plane temporal hister ollama-proxy; do
+for conf in cui dockhand notebook perplexica librechat authelia grafana nats n8n plane temporal hister ollama-proxy ketesa; do
     conf_file="/opt/appdata/swag/nginx/proxy-confs/${conf}.subdomain.conf"
     if [[ -f "$conf_file" ]]; then
         cp "$conf_file" "$SWAG_PROXY_CONFS_DEST/"
