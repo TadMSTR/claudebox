@@ -396,6 +396,27 @@ else
     log "update-audit.jsonl not found yet (no updates applied) — skipping"
 fi
 
+# ── personal-agent config.yml + sessions.db (gitignored runtime files) ───────
+log "Backing up personal-agent runtime files"
+PERSONAL_AGENT_SRC="/home/ted/repos/personal/personal-agent"
+PERSONAL_AGENT_DEST="$DEST/latest/personal-agent"
+mkdir -p "$PERSONAL_AGENT_DEST"
+if [[ -f "$PERSONAL_AGENT_SRC/config.yml" ]]; then
+    cp "$PERSONAL_AGENT_SRC/config.yml" "$PERSONAL_AGENT_DEST/config.yml"
+    chmod 600 "$PERSONAL_AGENT_DEST/config.yml"
+    cp "$PERSONAL_AGENT_DEST/config.yml" "$SNAPSHOT/personal-agent-config.yml" 2>/dev/null || true
+    log "personal-agent config.yml OK"
+else
+    log "WARNING: personal-agent config.yml not found — skipping"
+fi
+# sessions.db: active thread→session mappings; preserves in-flight conversations across redeploy
+if [[ -f "$PERSONAL_AGENT_SRC/sessions.db" ]]; then
+    cp "$PERSONAL_AGENT_SRC/sessions.db" "$PERSONAL_AGENT_DEST/sessions.db"
+    log "personal-agent sessions.db OK"
+else
+    log "personal-agent sessions.db not yet created — skipping"
+fi
+
 # ── Cleanup snapshots older than 90 days ─────────────────────────────────────
 log "Cleaning up snapshots older than 90 days"
 find "$DEST/snapshots" -maxdepth 1 -type d -mtime +90 -exec rm -rf {} \;
