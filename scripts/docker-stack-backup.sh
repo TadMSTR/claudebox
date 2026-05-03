@@ -74,10 +74,10 @@ EXCLUDE_PATTERNS=(
 NOTIFY_ON_SUCCESS=true
 NOTIFY_ON_FAILURE=true
 
-# Ntfy
-NTFY_ENABLED=true
-NTFY_URL="https://ntfy.glitch42.com"
-NTFY_TOPIC="claudebox"
+# Ntfy — disabled, notifications go to Matrix via send-matrix.sh
+NTFY_ENABLED=false
+NTFY_URL=""
+NTFY_TOPIC=""
 NTFY_PRIORITY="default"
 NTFY_TOKEN=""
 
@@ -296,11 +296,8 @@ Logs: $LOG_FILE"
 # Notifications
 #######################################
 send_ntfy() {
-    [[ "$NTFY_ENABLED" != true ]] && return 0
-    local title="$1" message="$2" priority="${3:-$NTFY_PRIORITY}" tags="${4:-backup}"
-    local curl_args=(-X POST -H "Title: $title" -H "Priority: $priority" -H "Tags: $tags" -d "$message")
-    [[ -n "$NTFY_TOKEN" ]] && curl_args+=(-H "Authorization: Bearer $NTFY_TOKEN")
-    curl -s "${curl_args[@]}" "$NTFY_URL/$NTFY_TOPIC" >/dev/null 2>&1 || log_error "Failed to send Ntfy notification"
+    local title="$1" message="$2"
+    ~/scripts/send-matrix.sh claudebox "$title: $message" >/dev/null 2>&1 || log_error "Failed to send Matrix notification"
 }
 
 send_pushover() {

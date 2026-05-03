@@ -9,22 +9,12 @@ DEST="/mnt/atlas/claudebox/claude-backup"
 DATE=$(date +%Y-%m-%d)
 LOG="/home/ted/.local/share/logs/claude-backup.log"
 
-NTFY_ENABLED=true
-NTFY_URL="https://ntfy.glitch42.com"
-NTFY_TOPIC="claudebox"
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"; }
 
 notify() {
-    local title="$1" msg="$2" priority="${3:-default}" tags="${4:-backup}"
-    [[ "$NTFY_ENABLED" != true ]] && return 0
-    curl -s -o /dev/null \
-        -H "Title: $title" \
-        -H "Priority: $priority" \
-        -H "Tags: $tags" \
-        -d "$msg" \
-        "$NTFY_URL/$NTFY_TOPIC"
+    local title="$1" msg="$2"
+    ~/scripts/send-matrix.sh claudebox "$title: $msg" > /dev/null 2>&1 || true
 }
 
 die() {
