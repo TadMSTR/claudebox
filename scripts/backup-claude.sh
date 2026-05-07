@@ -75,6 +75,18 @@ else
     log "WARNING: ~/.claude/settings.json not found — skipping"
 fi
 
+# ── Updater soak-window state ────────────────────────────────────────────────
+log "Backing up updater-state.json"
+if [[ -f "/home/ted/.claude/updater-state.json" ]]; then
+    cp "/home/ted/.claude/updater-state.json" "$SNAPSHOT/updater-state.json" \
+        || die "updater-state.json backup failed"
+    cp "$SNAPSHOT/updater-state.json" "$DEST/latest/updater-state.json" \
+        || die "Failed to copy updater-state.json to latest"
+    log "updater-state.json OK"
+else
+    log "updater-state.json not found yet (no updater runs) — skipping"
+fi
+
 # ── PM2 ecosystem dump ────────────────────────────────────────────────────────
 log "Backing up PM2 dump"
 # pm2 save writes to ~/.pm2/dump.pm2 — refresh it before copying
